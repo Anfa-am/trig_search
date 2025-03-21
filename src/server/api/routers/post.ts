@@ -29,11 +29,25 @@ export const postRouter = createTRPCRouter({
       },
     });
 
+
+   const partialNameMatches: JobTitle[] = await prisma.jobTitle.findMany({
+       where: {
+         name: {
+           contains: query,
+           mode: 'insensitive',
+         },
+         id: {
+          notIn: [...exactNameMatches].map(match => match.id),
+         },
+       },
+     });
+
    const fuzzyNameMatches: JobTitle[] = await prisma.$queryRaw`
         SELECT * FROM "JobTitle"
         WHERE name % ${query}
         AND name NOT LIKE ${query}
       `;
+
 
     const abbreviationMatches: JobTitle[] = await prisma.jobTitle.findMany({
       where: {
@@ -42,7 +56,7 @@ export const postRouter = createTRPCRouter({
           mode: 'insensitive',
         },
         id: {
-          notIn: [...exactNameMatches, ...fuzzyNameMatches].map(match => match.id),
+          notIn: [...exactNameMatches, ...fuzzyNameMatches, ...partialNameMatches].map(match => match.id),
         },
       },
     });
@@ -53,7 +67,7 @@ export const postRouter = createTRPCRouter({
           has: query,
         },
         id: {
-          notIn: [...exactNameMatches, ...fuzzyNameMatches, ...abbreviationMatches].map(match => match.id),
+          notIn: [...exactNameMatches, ...fuzzyNameMatches, ...partialNameMatches, ...abbreviationMatches].map(match => match.id),
         },
       },
     });
@@ -61,10 +75,23 @@ export const postRouter = createTRPCRouter({
     const rankedResults: RankedJobTitle[] = [
       ...abbreviationMatches.map(match => ({ ...match, score: 95 })),
       ...exactNameMatches.map(match => ({ ...match, score: 90 })),
+      ...partialNameMatches.map(match => ({ ...match, score: 85 })),
+      ...fuzzyNameMatches.map(match => ({ ...match, score: 80 })),
       ...relatedMatches.map(match => ({ ...match, score: 75 })),
-      ...fuzzyNameMatches.map(match => ({ ...match, score: 50 })),
     ];
 
-    return rankedResults.sort((a, b) => b.score - a.score);
+    const deduplicatedResults = new Map<string, RankedJobTitle>();
+
+    rankedResults.forEach(result => {
+      const existing = deduplicatedResults.get(result.id);
+      if (!existing) {
+        deduplicatedResults.set(result.id, result);
+      }
+    });
+
+    const sortedResults = Array.from(deduplicatedResults.values()).sort((a, b) => b.score - a.score);
+
+    return sortedResults;
+
   }),
 });

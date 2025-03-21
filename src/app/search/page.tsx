@@ -26,7 +26,6 @@ export default async function Search({
 }: {
   searchParams: Promise<SearchParams>
 }) {
-
   const query = (await searchParams).query as string;
 
   if (!query?.[0]) {
