@@ -1,13 +1,11 @@
-const InputField = ({ label, type = "text", placeholder, value, onChange, onEnter }: { 
-  label?: string, 
-  type?: string, 
+const InputField = ({ label, type = "text", placeholder, value, onChange, onEnter }: {
+  label?: string,
+  type?: string,
   placeholder?: string,
   value?: string,
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void 
-  onEnter?: () => void 
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onEnter?: () => void
 }) => {
-
-
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
       if(onEnter){ onEnter() }

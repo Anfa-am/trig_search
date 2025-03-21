@@ -38,7 +38,7 @@ export default async function Search({
       </SignedOut>
       <SignedIn>
 
-        <SearchBar defautlValue={query[0]}></SearchBar>
+        <SearchBar defaultValue={query[0]}></SearchBar>
         <div className="flex min-h-screen min-w-screen flex-col p-10 capitalize smaller:p-2">
           { search.length > 0 &&
             <div>
