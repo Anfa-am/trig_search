@@ -4,7 +4,6 @@ import { type Metadata } from "next";
 
 import {
   ClerkProvider,
-  SignInButton,
   SignUpButton,
   SignedIn,
   SignedOut,
@@ -25,17 +24,17 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className="noto-sans">
-          <header className="flex justify-end items-center p-4 gap-4 h-16">
+        <body className="noto-sans bg-[#101217] text-white">
+          <header className="flex justify-end items-center p-4 gap-4 h-16 border-b border-[#3F4454]">
             <SignedOut>
-              <SignInButton />
-              <SignUpButton />
+              <div className="bg-blue-500 py-3 px-5 rounded-[25px] text-white hover:bg-blue-600">
+                <SignUpButton />
+              </div>
             </SignedOut>
             <SignedIn>
               <UserButton />
             </SignedIn>
           </header>
-
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </body>
       </html>
