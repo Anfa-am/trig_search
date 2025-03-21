@@ -28,7 +28,7 @@ export default function SearchClient() {
           />
 
           <Link
-            className={clsx("flex max-w-xs flex-col my-8 rounded-xl bg-[#3F4454] py-2 px-4 hover:border hover:border-white",
+            className={clsx("flex max-w-xs flex-col my-8 rounded-xl bg-accent py-2 px-4 hover:border hover:border-white",
               searchQuery ? "cursor-pointer" : "cursor-default pointer-events-none",
             )}
             href={`/search?query=${encodeURIComponent(searchQuery)}`}

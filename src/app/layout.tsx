@@ -24,10 +24,10 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className="noto-sans bg-[#101217] text-white">
+        <body className="noto-sans bg-main text-white">
           <header className="flex justify-end items-center p-4 gap-4 h-16 border-b border-[#3F4454]">
             <SignedOut>
-              <div className="bg-blue-500 py-3 px-5 rounded-[25px] text-white hover:bg-blue-600">
+              <div className="bg-blue-500 py-3 px-5 rounded-max text-white hover:bg-blue-600">
                 <SignUpButton />
               </div>
             </SignedOut>

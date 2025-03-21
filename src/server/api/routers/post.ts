@@ -2,23 +2,15 @@ import { z } from "zod";
 import { PrismaClient } from '@prisma/client';
 import type { JobTitle } from '@prisma/client';
 
-
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 
+const prisma = new PrismaClient();
 
 type RankedJobTitle = JobTitle & {
   score: number;
 };
 
 export const postRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
-
   search: publicProcedure
     .input(z.object({ query: z.string() }))
     .query(async ({ input }): Promise<RankedJobTitle[]> => {
@@ -28,7 +20,6 @@ export const postRouter = createTRPCRouter({
       return [];
     }
 
-    // First search: exact matches in name (highest priority)
     const exactNameMatches: JobTitle[] = await prisma.jobTitle.findMany({
       where: {
         name: {
@@ -38,7 +29,6 @@ export const postRouter = createTRPCRouter({
       },
     });
 
-    // Second search: fuzzy matches in name
     const fuzzyNameMatches: JobTitle[] = await prisma.jobTitle.findMany({
       where: {
         name: {
@@ -51,7 +41,6 @@ export const postRouter = createTRPCRouter({
       },
     });
 
-    // Third search: fuzzy matches in abbreviation
     const abbreviationMatches: JobTitle[] = await prisma.jobTitle.findMany({
       where: {
         abbreviation: {
@@ -64,7 +53,6 @@ export const postRouter = createTRPCRouter({
       },
     });
 
-    // Fourth search: fuzzy matches in related array
     const relatedMatches: JobTitle[] = await prisma.jobTitle.findMany({
       where: {
         related: {
@@ -76,15 +64,15 @@ export const postRouter = createTRPCRouter({
       },
     });
 
-    // Combine all results with weightings for ranking
     const rankedResults: RankedJobTitle[] = [
       ...exactNameMatches.map(match => ({ ...match, score: 100 })),
-      ...fuzzyNameMatches.map(match => ({ ...match, score: 75 })),
-      ...abbreviationMatches.map(match => ({ ...match, score: 50 })),
-      ...relatedMatches.map(match => ({ ...match, score: 25 })),
+      ...relatedMatches.map(match => ({ ...match, score: 75 })),
+      ...fuzzyNameMatches.map(match => ({ ...match, score: 50 })),
+      ...abbreviationMatches.map(match => ({ ...match, score: 25 })),
     ];
 
-    // Sort by score (highest first)
-    return rankedResults.sort((a, b) => b.score - a.score);
+    const a= rankedResults.sort((a, b) => b.score - a.score);
+    console.log(a)
+return a
   }),
 });

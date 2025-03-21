@@ -12,23 +12,34 @@ import {
 import NoResultsGraphic from './no-results.svg';
 import { api } from "@/trpc/server";
 import { MainResult } from "./_components/mainResult";
+import { SearchBar } from "./_components/searchBar";
 
-export default async function Home({ searchParams }: { searchParams: { query?: string } }) {
-  const query = searchParams.query;
 
-  if (!query) {
+interface SearchParams {
+  query: string | string[] | undefined;
+}
+
+export default async function Search({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>
+}) {
+  const query = (await searchParams).query;
+
+  if (!query?.[0]) {
     redirect('/');
   }
-  const search = await api.post.search({ query });
+  const search = await api.post.search({ query: query[0] });
 
-  console.log(search);
   return (
-    <main>
+    <main className="relative">
       <SignedOut>
         <RedirectToSignIn></RedirectToSignIn>
       </SignedOut>
       <SignedIn>
-        <div className="flex min-h-screen min-w-screen flex-col p-10 capitalize">
+
+        <SearchBar defautlValue={query[0]}></SearchBar>
+        <div className="flex min-h-screen min-w-screen flex-col p-10 capitalize smaller:p-2">
           { search.length > 0 &&
             <div>
               <MainResult
@@ -40,7 +51,7 @@ export default async function Home({ searchParams }: { searchParams: { query?: s
                 <Link key={res.id}
                   href={`/search?query=${encodeURIComponent(res.name)}`}
                   className="underline hover:text-blue-500">
-                  <h1 className="text-4xl mb-10 px-10">{res.name}</h1>
+                  <h1 className="text-4xl mb-10 px-10 smaller:px-2">{res.name}</h1>
                 </Link>
               )) }
             </div>
@@ -49,7 +60,7 @@ export default async function Home({ searchParams }: { searchParams: { query?: s
           {
             search.length  === 0 &&
               <div className="flex flex-col gap-4 p-10" >
-                <p>Your search - <b>{query}</b> - did not match any documents.</p>
+                <p>Your search - <b>{query[0]}</b> - did not match any documents.</p>
                 <p>Suggestions:</p>
                 <ul>
                   <li>Make sure that all words are spelled correctly.</li>

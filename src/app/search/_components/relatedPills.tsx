@@ -6,7 +6,7 @@ export function RelatedPills({ relatedMatches }: { relatedMatches: string[] }) {
       <Link
         key={key+match}
         href={`/search?query=${encodeURIComponent(match)}`}
-        className="bg-[#3F4454] py-3 px-5 font-sm mr-5 rounded-[25px] text-white hover:bg-[#3F4454]/90">
+        className="bg-accent py-3 px-5 font-sm mr-5 rounded-max text-white hover:bg-accent/90">
         {match}
       </Link>
     ))}

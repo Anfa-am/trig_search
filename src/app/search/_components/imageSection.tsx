@@ -39,7 +39,7 @@ export async function ImageSection({ imageQuery }: { imageQuery: string }) {
 
   if(photos.length === 0) { return (<div> </div>); }
 
-  return (<div className="grid grid-cols-2 gap-1 rounded-[25px] overflow-hidden">
+  return (<div className="grid grid-cols-2 gap-1 rounded-max overflow-hidden">
     {photos.map((photo, index) => (
       <Image
         className="object-cover h-full w-full max-h-[200px]"

@@ -1,12 +1,18 @@
 import { type Config } from "tailwindcss";
-import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
   content: ["./src/**/*.tsx"],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ["var(--font-geist-sans)", ...fontFamily.sans],
+      screens: {
+        'smaller': {'max': '1000px'},
+      },
+      backgroundColor: {
+        'main': '#101217',
+        'accent': '#3F4454'
+      },
+      borderRadius: {
+        'max': '25px',
       },
     },
   },
