@@ -16,7 +16,7 @@ export async function RoleDescription({ jobTitle }: { jobTitle: string }) {
       messages: [
         {
           role: "user",
-          content: `In plain text write a breif dictionary description for the following job title: ${jobTitle}. If you can't find a description, just write "No description availible." and do not include any formatting like * or -` ,
+          content: `In plain text write a breif description for the following job title: ${jobTitle}. If you can't come up with a description, just write "No description availible." and do not include any formatting like * or -` ,
         },
       ],
     });

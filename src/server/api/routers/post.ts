@@ -29,17 +29,11 @@ export const postRouter = createTRPCRouter({
       },
     });
 
-    const fuzzyNameMatches: JobTitle[] = await prisma.jobTitle.findMany({
-      where: {
-        name: {
-          contains: query,
-          mode: 'insensitive',
-        },
-        id: {
-          notIn: exactNameMatches.map(match => match.id),
-        },
-      },
-    });
+   const fuzzyNameMatches: JobTitle[] = await prisma.$queryRaw`
+        SELECT * FROM "JobTitle"
+        WHERE name % ${query}
+        AND name NOT LIKE ${query}
+      `;
 
     const abbreviationMatches: JobTitle[] = await prisma.jobTitle.findMany({
       where: {
@@ -65,14 +59,12 @@ export const postRouter = createTRPCRouter({
     });
 
     const rankedResults: RankedJobTitle[] = [
-      ...exactNameMatches.map(match => ({ ...match, score: 100 })),
+      ...abbreviationMatches.map(match => ({ ...match, score: 95 })),
+      ...exactNameMatches.map(match => ({ ...match, score: 90 })),
       ...relatedMatches.map(match => ({ ...match, score: 75 })),
       ...fuzzyNameMatches.map(match => ({ ...match, score: 50 })),
-      ...abbreviationMatches.map(match => ({ ...match, score: 25 })),
     ];
 
-    const a= rankedResults.sort((a, b) => b.score - a.score);
-    console.log(a)
-return a
+    return rankedResults.sort((a, b) => b.score - a.score);
   }),
 });
