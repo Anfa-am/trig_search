@@ -30,14 +30,19 @@ export default async function Home() {
 
   const URL = `https://api.pexels.com/v1/search?query=nature&per_page=1&page=1`;
 
+  const apiKey = process.env.NEXT_PEXELS_API_KEY;
+  if (!apiKey) {
+    throw new Error('Pexels API key is missing');
+  }
+
   const res = await fetch(URL, {
     headers: {
-      'Authorization': process.env.NEXT_PEXELS_API_KEY
+      'Authorization': apiKey
     },
-  })
+  });
 
-  const {photos} : { photos: ImageDetails[] } = await res.json();
 
+  const {photos} = await res.json() as { photos: ImageDetails[] };
   console.log(photos)
 
 
